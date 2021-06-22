@@ -1,0 +1,31 @@
+services:
+  - docker:19.03.7-dind
+stages:
+  - build docker image
+  - deploy
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+docker build:
+  image: docker:stable
+  stage: build docker image
+  before_script:
+    - source .${CI_COMMIT_REF_NAME}.env
+  script:
+    - docker build -t $DOCKER_REPO .
+    #- docker login -u $DOCKER_USER -p $DOCKER_PASSWORD registry.davlen.de
+    #- docker push $DOCKER_REPO
+deploy:
+  image: ubuntu:latest
+  stage: deploy
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+    - source .${CI_COMMIT_REF_NAME}.env
+  script:
+    - ssh root@davlen.de "docker stop $APP_NAME; docker rm $APP_NAME; docker container run -d --name $APP_NAME --network $DOCKER_NETWORK -p $PORT:80 $DOCKER_REPO; docker logout"
