@@ -1,0 +1,66 @@
+<nz-layout style="height:100vh">
+  <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
+    <div class="logo" routerLink="/dashboard">
+      Upli
+      <ng-container *ngIf="!isCollapsed">Dashboard</ng-container>
+    </div>
+    <ul nz-menu nzTheme="dark" nzMode="inline">
+      <li nz-submenu nzTitle="{{(user | async).projects.length > 0 ? (user | async).projects.length : null}} Projects"
+          nzIcon="project">
+        <ul>
+          <li nz-menu-item *ngFor="let project of (user | async).projects"
+              [nzMatchRouter]="true"
+              [routerLink]="'project/' + project.project_id">{{project.name}}</li>
+          <li nz-menu-item nzDisabled="true" *ngIf="(user | async).projects.length == 0">No entries</li>
+        </ul>
+      </li>
+      <li nz-submenu nzTitle="Team" nzIcon="team">
+        <ul>
+          <li nz-menu-item>Team 1</li>
+          <li nz-menu-item>Team 2</li>
+        </ul>
+      </li>
+      <li nz-menu-item>
+        <i nz-icon nzType="file"></i>
+        <span>File</span>
+      </li>
+    </ul>
+  </nz-sider>
+  <nz-layout>
+    <nz-header>
+      <div style="display:flex;justify-content:space-between;padding-right:20px">
+        <i class="trigger" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"
+           (click)="isCollapsed = !isCollapsed"></i>
+        <div>
+          <button
+            nz-button
+            nzType="primary"
+            nz-popover
+            [nzPopoverTitle]="(user | async)?.firstName + ' ' + (user | async)?.lastName"
+            [(nzPopoverVisible)]="profileDropdownVisible"
+            (nzPopoverVisibleChange)="changeDropdownVisible($event)"
+            nzPopoverTrigger="click"
+            nzPopoverPlacement="bottom"
+            [nzPopoverContent]="profileDropdown"
+          >{{(user | async).username}}</button>
+          <ng-template #profileDropdown>
+            <div style="display: flex; flex-direction: column; row-gap: 10px">
+              <button nz-button routerLink="/dashboard/user/settings"><i nz-icon nzType="tool" nzTheme="outline"></i> Settings</button>
+              <button nz-button routerLink="/auth/logout"><i nz-icon nzType="logout" nzTheme="outline"></i> Logout</button>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </nz-header>
+    <nz-content>
+      <!--<nz-breadcrumb>
+        <nz-breadcrumb-item>User</nz-breadcrumb-item>
+        <nz-breadcrumb-item>Bill</nz-breadcrumb-item>
+      </nz-breadcrumb>-->
+      <div class="inner-content">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+    <nz-footer>Upli.io ©{{currentYear()}} Created by Lenny Bakkalian</nz-footer>
+  </nz-layout>
+</nz-layout>

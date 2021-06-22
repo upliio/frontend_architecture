@@ -21,6 +21,8 @@
               "apps/frontend/src/assets"
             ],
             "styles": [
+              "./node_modules/ng-zorro-antd/ng-zorro-antd.dark.css",
+              "./node_modules/ng-zorro-antd/resizable/style/index.min.css",
               "apps/frontend/src/styles.scss"
             ],
             "scripts": []
@@ -57,20 +59,14 @@
         },
         "serve": {
           "executor": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "frontend:build"
-          },
+          "options": { "browserTarget": "frontend:build" },
           "configurations": {
-            "production": {
-              "browserTarget": "frontend:build:production"
-            }
+            "production": { "browserTarget": "frontend:build:production" }
           }
         },
         "extract-i18n": {
           "executor": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "frontend:build"
-          }
+          "options": { "browserTarget": "frontend:build" }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
@@ -83,9 +79,7 @@
         },
         "test": {
           "executor": "@nrwl/jest:jest",
-          "outputs": [
-            "coverage/apps/frontend"
-          ],
+          "outputs": ["coverage/apps/frontend"],
           "options": {
             "jestConfig": "apps/frontend/jest.config.js",
             "passWithNoTests": true
@@ -106,25 +100,47 @@
             "devServerTarget": "frontend:serve"
           },
           "configurations": {
-            "production": {
-              "devServerTarget": "frontend:serve:production"
-            }
+            "production": { "devServerTarget": "frontend:serve:production" }
           }
         },
         "lint": {
           "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["apps/frontend-e2e/**/*.{js,ts}"] }
+        }
+      }
+    },
+    "shared": {
+      "root": "libs/shared",
+      "sourceRoot": "libs/shared/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": { "lintFilePatterns": ["libs/shared/**/*.ts"] }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/shared"],
           "options": {
-            "lintFilePatterns": [
-              "apps/frontend-e2e/**/*.{js,ts}"
-            ]
+            "jestConfig": "libs/shared/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "build": {
+          "executor": "@nrwl/node:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/shared",
+            "tsConfig": "libs/shared/tsconfig.lib.json",
+            "packageJson": "libs/shared/package.json",
+            "main": "libs/shared/src/index.ts",
+            "assets": ["libs/shared/*.md"]
           }
         }
       }
     }
   },
-  "cli": {
-    "defaultCollection": "@nrwl/angular"
-  },
+  "cli": { "defaultCollection": "@nrwl/angular" },
   "generators": {
     "@nrwl/angular:application": {
       "style": "scss",
@@ -137,9 +153,7 @@
       "linter": "eslint",
       "unitTestRunner": "jest"
     },
-    "@nrwl/angular:component": {
-      "style": "scss"
-    }
+    "@nrwl/angular:component": { "style": "scss" }
   },
   "defaultProject": "frontend"
 }

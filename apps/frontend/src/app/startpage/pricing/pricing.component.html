@@ -1,0 +1,13 @@
+<div style="margin-top:100px">
+  <div nz-row nzJustify="center" style="gap: 30px">
+    <ng-container *ngFor="let plan of plans">
+      <nz-card nz-col nzXs="20" nzSm="10" nzMd="7" [nzTitle]="plan.name" [nzExtra]="headerTemplate">
+        <p *ngFor="let detail of plan.details" [innerHTML]="detail"></p>
+      </nz-card>
+      <ng-template #headerTemplate>
+        <span *ngIf="plan.id == 'static_free'">Included</span>
+        <button nz-button *ngIf="plan.id != 'static_free'">Buy for {{plan.price | number : '1.2-2'}}€</button>
+      </ng-template>
+    </ng-container>
+  </div>
+</div>

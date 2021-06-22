@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+.clickable-icon {
+  cursor: Pointer;
+}
+
+code {
+  padding: 3px 5px;
+  border-radius: 5px;
+  user-select: all;
+  cursor: Pointer;
+  font-size: 14px;
+
+  &:hover{
+
+  }
+}

@@ -1,0 +1,33 @@
+.logo-text {
+  font-size: 30px;
+  font-weight: bold;
+
+  .logo-domain {
+    font-size: 15px;
+  }
+}
+
+.link-bar {
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+
+  a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+
+    &:hover {
+      color: #d7d7d7;
+    }
+
+    &:not(:first-child) {
+      margin-left: 50px;
+    }
+  }
+}
+
+.profile-dropdown {
+  display: flex;
+  align-items: center;
+}

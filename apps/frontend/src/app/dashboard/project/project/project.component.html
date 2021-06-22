@@ -1,0 +1,42 @@
+<ng-container *ngIf="project">
+  <h2>{{project?.name}}</h2>
+
+  <nz-descriptions nzBordered>
+    <nz-descriptions-item nzTitle="Plan" [nzSpan]="3">
+      Free <a routerLink="/pricing" [queryParams]="{project_id: project?.project_id}">Upgrade</a>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Domain">
+      <div *ngIf="!editDomain">
+        <a [href]="projectService.getDomain(project)" target="_blank">{{projectService.getDomain(project)}}</a>
+        <button nz-button nzType="link" (click)="editDomain = true">Edit</button>
+      </div>
+      <form (submit)="saveDomain(newDomainInp, true)" style="display:flex;flex-direction:row;column-gap:10px"
+            *ngIf="editDomain">
+        <nz-input-group nzAddOnBefore="https://" nzAddOnAfter=".upli.io">
+          <input type="text" nz-input [value]="project.domain" #newDomainInp/> <!-- TODO: handle custom domains -->
+        </nz-input-group>
+        <button nz-button type="submit">Speichern</button>
+        <button nz-button nzDanger nzType="link" (click)="saveDomain(newDomainInp, false)"><i nz-icon
+                                                                                              nzType="minus-circle"></i>
+        </button>
+      </form>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Storage used">
+      {{project.stats_bytes_used | bytes : 0 : 'B' : 'KB'}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Files">
+      {{project.stats_total_files}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Status" [nzSpan]="3">
+      <nz-badge [nzStatus]="project.enabled ? 'success' : 'error'"
+                [nzText]="project.enabled ? 'Running' : 'Stopped'"></nz-badge>
+      <nz-switch style="margin-left:10px" [(ngModel)]="project.enabled" (ngModelChange)="toggleStatus()"></nz-switch>
+    </nz-descriptions-item>
+  </nz-descriptions>
+
+
+</ng-container>
+<ng-container *ngIf="!project">
+  <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i> Loading project...</ng-template>
+  <nz-spin nzSimple [nzIndicator]="indicatorTemplate"></nz-spin>
+</ng-container>

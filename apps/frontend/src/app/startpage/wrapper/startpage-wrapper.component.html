@@ -1,0 +1,11 @@
+<nz-page-header [nzGhost]="false">
+  <nz-page-header-title routerLink="/" style="cursor: Pointer">Upli.io</nz-page-header-title>
+  <nz-page-header-extra>
+    <a routerLink="/getting-started" nz-button>Getting Started</a>
+    <a routerLink="/pricing" nz-button>Pricing</a>
+    <a href="https://github.com/upliio" nz-button>Github</a>
+    <a routerLink="/auth/login" nz-button nzType="primary" *ngIf="!(userService.currentUser() | async)">Login</a>
+    <a routerLink="/dashboard" nz-button nzType="primary" *ngIf="userService.currentUser() | async">Dashboard</a>
+  </nz-page-header-extra>
+</nz-page-header>
+<router-outlet></router-outlet>
