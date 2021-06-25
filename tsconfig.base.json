@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@upli/shared": ["libs/shared/src/index.ts"]
+      "@upli/shared": ["libs/shared/src/index.ts"],
+      "@upli/cli": ["libs/cli/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
