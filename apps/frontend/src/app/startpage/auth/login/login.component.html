@@ -1,7 +1,7 @@
 <div class="auth-wrapper">
 
   <div class="form-wrapper">
-
+    <h3>Log into your account</h3>
     <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="submitForm()">
       <nz-form-item>
         <nz-form-control nzErrorTip="Please input your username!">
@@ -28,7 +28,7 @@
         </div>
       </div>
       <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Log in</button>
-      Or <a routerLink="/auth/register"> register now! </a>
+      Or <a routerLink="/auth/register">register now!</a>
     </form>
 
   </div>

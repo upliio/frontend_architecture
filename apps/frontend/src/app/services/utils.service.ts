@@ -10,6 +10,7 @@ export class UtilsService {
   constructor(private http: HttpClient) {
   }
 
+  getRegexPattern = () => this.http.get<[]>(`/api/utils/regex`);
 
   getPlans = () => this.http.get<PlanDto[]>(`/api/utils/plans`);
 

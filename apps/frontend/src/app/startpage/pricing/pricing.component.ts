@@ -3,7 +3,7 @@ import {PlanDto} from '@upli/shared';
 import {UtilsService} from '../../services/utils.service';
 
 @Component({
-  selector: 'app-pricing',
+  selector: 'upli-pricing',
   templateUrl: './pricing.component.html',
   styleUrls: ['./pricing.component.scss']
 })

@@ -18,6 +18,11 @@ export class UserService {
 
   getToken = () => localStorage.getItem('token');
 
+  setToken = (token: string) => {
+    this.resetUser();
+    localStorage.setItem('token', token);
+  }
+
   currentUser = () => {
     if (this.user == null) {
       this.user = this.getToken() ? this.http.get<UserEntity>(`/api/user/self`).pipe(shareReplay(1)) : of(null);
@@ -34,4 +39,10 @@ export class UserService {
     localStorage.removeItem('token');
     location.href = '/';
   }
+
+  checkIfUsernameIsAvailable = (username: string) => this.http.post<boolean>(`/api/utils/checkUsername`, username);
+  checkIfEmailIsAvailable = (email: string) => this.http.post<boolean>(`/api/utils/checkEmail`, email);
+
+  register = (details: any) => this.http.post<{ token: string }>(`/api/auth/register`, details);
 }
+

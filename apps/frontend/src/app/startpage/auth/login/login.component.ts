@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 
 @Component({
-  selector: 'app-login',
+  selector: 'upli-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
@@ -46,18 +46,4 @@ export class LoginComponent implements OnInit {
       });
     }
   }
-
-
-  /*login() {
-    this.userService.login({username: this.username, password: this.password}).subscribe(res => {
-      this.error = null;
-      localStorage.setItem('token', res.token);
-      this.userService.resetUser();
-      this.router.navigate(['/dashboard']);
-    }, err => {
-      if (err.status == 403) {
-        this.error = 'Invalid credentials';
-      }
-    });
-  }*/
 }

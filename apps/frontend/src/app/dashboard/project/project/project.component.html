@@ -3,7 +3,7 @@
 
   <nz-descriptions nzBordered>
     <nz-descriptions-item nzTitle="Plan" [nzSpan]="3">
-      Free <a routerLink="/pricing" [queryParams]="{project_id: project?.project_id}">Upgrade</a>
+      {{project.plan.name}} <a routerLink="/pricing" [queryParams]="{project_id: project?.project_id}">Upgrade</a>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="Domain">
       <div *ngIf="!editDomain">
@@ -22,10 +22,10 @@
       </form>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="Storage used">
-      {{project.stats_bytes_used | bytes : 0 : 'B' : 'KB'}}
+      {{project.stats_bytes_used | bytes : 0 : 'B' : 'KB'}} / {{project.plan.max_kb | bytes : 0 : 'KB' : 'KB'}}
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="Files">
-      {{project.stats_total_files}}
+      {{project.stats_total_files}} / {{project.plan.max_files}}
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="Status" [nzSpan]="3">
       <nz-badge [nzStatus]="project.enabled ? 'success' : 'error'"

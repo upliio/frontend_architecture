@@ -14,7 +14,6 @@ import {PricingComponent} from './startpage/pricing/pricing.component';
   imports: [RouterModule.forRoot([
     {
       path: '',
-      pathMatch: 'prefix',
       component: StartpageWrapperComponent,
       children: [
         {
@@ -54,7 +53,8 @@ import {PricingComponent} from './startpage/pricing/pricing.component';
     }
   ], {
     anchorScrolling: 'enabled',
-    onSameUrlNavigation: 'reload'
+    onSameUrlNavigation: 'reload',
+    enableTracing: false
   })],
   exports: [RouterModule]
 })
