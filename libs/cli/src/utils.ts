@@ -111,3 +111,5 @@ export enum Colors {
     BgCyan = '\x1b[46m',
     BgWhite = '\x1b[47m'
 }
+
+export const getDomain = (domain: string) => `https://${domain}${domain.includes('.') ? '' : '.upli.io'}`;

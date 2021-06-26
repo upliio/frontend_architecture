@@ -3,7 +3,7 @@
   <div class="form-wrapper">
     <h3>Create a new account</h3>
     <form nz-form [formGroup]="validateForm" class="login-form" (ngSubmit)="submitForm()">
-      <nz-form-item style="column-gap: 15px">
+      <nz-form-item style="gap: 15px">
         <nz-form-control [nzErrorTip]="getError('firstname')">
           <input type="text" nz-input formControlName="firstname" placeholder="Firstname"/>
         </nz-form-control>
@@ -13,9 +13,10 @@
       </nz-form-item>
       <nz-form-item>
         <nz-form-control [nzErrorTip]="getError('username')">
-          <nz-input-group nzPrefixIcon="user">
-            <input type="text" nz-input formControlName="username" placeholder="Username"/>
+          <nz-input-group nzPrefixIcon="user" [nzSuffix]="getError('username') || usernameInputField.value.length == 0 ? null : usernameAvailable">
+            <input type="text" nz-input formControlName="username" placeholder="Username" (input)="usernameToLowercase()" #usernameInputField/>
           </nz-input-group>
+          <ng-template #usernameAvailable><i nz-icon nz-tooltip nzTooltipTitle="Username available" nzType="check-circle" style="color:green"></i></ng-template>
         </nz-form-control>
       </nz-form-item>
       <nz-form-item>
@@ -33,7 +34,7 @@
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
-      <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Register now for free</button>
+      <button nz-button class="login-form-button login-form-margin" nzType="primary" [disabled]="!validateForm.valid">Register now for free</button>
       Or <a routerLink="/auth/login">log into your account!</a>
     </form>
 

@@ -90,4 +90,7 @@ export class RegisterComponent implements OnInit {
       return `The ${field} may only contain characters from a-z`;
   }
 
+  usernameToLowercase() {
+    this.validateForm.controls['username'].setValue(this.validateForm.controls['username'].value.toLowerCase());
+  }
 }

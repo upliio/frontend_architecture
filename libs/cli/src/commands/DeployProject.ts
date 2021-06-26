@@ -1,6 +1,6 @@
 import commander from 'commander';
-import {isProject, loadConfig, PROJECT_CONFIG_FILE} from '../ConfigManager';
-import {Colors, debug, isDebug, normalizePath} from '../utils';
+import {appendConfig, isProject, loadConfig, PROJECT_CONFIG_FILE} from '../ConfigManager';
+import {Colors, debug, getDomain, isDebug, normalizePath} from '../utils';
 import ora from 'ora';
 import {axiosInstance} from '../index';
 import {ProjectConfigModel} from '../dtos/ProjectConfigModel';
@@ -32,13 +32,11 @@ export const DeployProject = commander.program.createCommand('deploy')
     }
 
 
-    const spinner = ora('Prepare deployment');
+    let spinner = ora('Prepare deployment');
 
 
     // hide spinner if debug is enabled
-    if (commander.program.opts().debug) {
-      debug('Hide spinner for debug logging');
-    } else {
+    if (!commander.program.opts().debug) {
       spinner.start();
     }
 
@@ -80,8 +78,6 @@ export const DeployProject = commander.program.createCommand('deploy')
 
           const clientProjectStructure = createLocalProjectStructure(projectConfig.project);
 
-          spinner.text = `Diff server(${serverProjectStructure.length}) <=> client(${clientProjectStructure.length})`;
-
 
           debug(`serverProjectStructure: ${JSON.stringify(serverProjectStructure)}`);
           debug(`clientProjectStructure: ${JSON.stringify(clientProjectStructure)}`);
@@ -92,7 +88,9 @@ export const DeployProject = commander.program.createCommand('deploy')
           const patchFiles = clientProjectStructure.filter(clientFile => !serverProjectStructure.find(serverFile => serverFile.name == clientFile.name && serverFile.hash == clientFile.hash));
 
 
-          spinner.text = `Remove ${removeFiles.length} files`;
+          spinner.succeed('Patch created!');
+          spinner.start(`Remove ${removeFiles.length} files`);
+
           debug(`remove ${removeFiles.length} files`);
 
           // delete unused project files
@@ -101,22 +99,28 @@ export const DeployProject = commander.program.createCommand('deploy')
             deleteEmptyFolders: true
           });
           debug(`deleteResponse ${JSON.stringify(deleteResponse.data)}`);
+          spinner.succeed(`${deleteResponse.data.deletedFiles.length} files deleted`);
 
-          spinner.text = `Patch ${patchFiles.length} files`;
+          spinner.info(`Patch ${patchFiles.length} files...`);
           debug(`patch ${patchFiles.length}`);
 
+          let filesSuccessfullyPatched = 0;
           for (let i = 0; i < patchFiles.length; i++) {
-            await patchFilesAsync(projectConfig.project, patchFiles[i].name);
+            if (await patchFilesAsync(projectConfig.project, patchFiles[i].name, spinner))
+              filesSuccessfullyPatched++;
           }
 
           spinner.text = `Patch configuration`;
 
           const patchConfigResponse = await axiosInstance.post(`/api/project/config/${projectConfig.project.name}`, projectConfig.project.config);
-          if (patchConfigResponse.status != 200)
-            console.log(`${Colors.FgRed}Error while patching config: ${patchConfigResponse?.data}`);
-          debug(`Configuration patched ${JSON.stringify(projectConfig.project.config)}`);
+          if (patchConfigResponse.status != 200) {
+            spinner.fail(`Error while patching config: ${patchConfigResponse?.data}`);
+            debug(`Configuration patched ${JSON.stringify(projectConfig.project.config)}`);
+          }
 
-          spinner.text = 'Deployed!';
+          projectConfig.project = patchConfigResponse.data; // update project
+          appendConfig(PROJECT_CONFIG_FILE, {project: projectConfig.project} as ProjectConfigModel);
+
           spinner.stop();
 
 
@@ -125,10 +129,9 @@ export const DeployProject = commander.program.createCommand('deploy')
           }
 
           if (patchFiles.length == 0) {
-            console.log(`${Colors.FgYellow}No changes were detected and therefore nothing deployed to ${chalk.bold('https://' + projectConfig.project.domain)} !${Colors.Reset}`);
-          } else {
-            patchFiles.forEach(file => console.log(`${Colors.FgMagenta}Patched: ${file.name} ${file.hash}`));
-            console.log(`${Colors.FgGreen}Successfully deployed ${patchFiles.length} files to ${chalk.bold('https://' + projectConfig.project.domain)} !${Colors.Reset}`);
+            spinner.info(chalk.yellow(`No changes were detected and therefore nothing deployed`));
+          } else if (filesSuccessfullyPatched > 0) {
+            spinner.succeed(`Successfully deployed ${filesSuccessfullyPatched} files to ${getDomain(projectConfig.project.domain)}`);
           }
 
         }).catch(err => spinner.stop());
@@ -143,9 +146,10 @@ function getFullBuildPath(project: ProjectEntity) {
   return normalizePath(process.cwd() + '/' + (project.config.deploy.buildPath ?? '') + '\/');
 }
 
-const patchFilesAsync = async (project: ProjectEntity, file: string) => {
+
+const patchFilesAsync = async (project: ProjectEntity, file: string, spinner: ora.Ora) => {
   try {
-    const filepath = getFullBuildPath(project) + file.split('/').join('\\');
+    const filepath = normalizePath(getFullBuildPath(project) + file);
 
     const form_data = new FormData();
     form_data.append('file', fs.createReadStream(filepath));
@@ -159,9 +163,11 @@ const patchFilesAsync = async (project: ProjectEntity, file: string) => {
     });
 
     debug(`patched ${filepath} => ${response?.data}`);
-
+    spinner.succeed(`Patched ${normalizePath(file)}`);
+    return true;
   } catch (err) {
-    console.error(err);
+    spinner.fail(`Could not patch ${normalizePath(file)}`);
+    return false;
   }
 };
 
@@ -177,10 +183,12 @@ function getFileHashesFromFolder(directory: string, projectDirectory: string): D
     if (fs.lstatSync(file).isDirectory()) {
       files = [...files, ...getFileHashesFromFolder(file, projectDirectory)];
     } else {
-      files.push({
-        name: file.replace(projectDirectory, '').split('\\').join('/').split('//').join('/'),
-        hash: md5File.sync(file)
-      });
+      if (!file.endsWith('upli.json')) { // dont deploy upli.json
+        files.push({
+          name: file.replace(projectDirectory, '').split('\\').join('/').split('//').join('/'),
+          hash: md5File.sync(file)
+        });
+      }
     }
   });
   return files;
