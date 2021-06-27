@@ -1,0 +1,16 @@
+<ng-container *ngIf="params">
+  <div style="display: flex; justify-content: center">
+    <nz-result
+      nzStatus="success"
+      nzTitle="Successfully Purchased Lite Upgrade for testproject1"
+      nzSubTitle="You can cancel the subscription at any time under the project settings. Be aware that when you cancel the subscription, files may be lost if you have exceeded the storage space of the free subscription."
+      style="max-width: 800px"
+    >
+      <div nz-result-extra>
+        <button nz-button nzType="primary">View your project</button>
+        <button nz-button>Subscriptions</button>
+      </div>
+    </nz-result>
+
+  </div>
+</ng-container>

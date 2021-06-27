@@ -6,7 +6,7 @@
       </nz-card>
       <ng-template #headerTemplate>
         <span *ngIf="plan.id == 'static_free'">Included</span>
-        <button nz-button *ngIf="plan.id != 'static_free'">Buy for {{plan.price | number : '1.2-2'}}€</button>
+        <button nz-button *ngIf="plan.id != 'static_free'" (click)="buyPlan(plan.id)">For {{plan.price | number : '1.0-2'}}€ /month</button>
       </ng-template>
     </ng-container>
   </div>

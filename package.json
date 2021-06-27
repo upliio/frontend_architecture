@@ -25,11 +25,13 @@
     "dep-graph": "nx dep-graph",
     "help": "nx help",
     "postinstall": "ngcc --properties es2015 browser module main",
-    "serve:frontend": "nx serve frontend",
+    "serve:frontend": "nx serve frontend --disable-host-check",
     "patch:shared": "cd libs/shared && npm version patch",
     "publish:shared": "npm run patch:shared && nx build shared && cd dist/libs/shared && npm publish",
     "link:cli": "cd libs/cli && npm link",
-    "build:cli": "cd libs/cli && npm run build"
+    "patch:cli": "cd libs/cli && npm version patch",
+    "build:cli": "cd libs/cli && npm run build",
+    "publish:cli": "npm run patch:cli && npm run build:cli && cd libs/cli && npm publish"
   },
   "private": true,
   "dependencies": {

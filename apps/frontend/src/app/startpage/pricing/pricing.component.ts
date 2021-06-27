@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {PlanDto} from '@upli/shared';
 import {UtilsService} from '../../services/utils.service';
+import {ActivatedRoute} from '@angular/router';
+import {ProjectService} from '../../services/project.service';
 
 @Component({
   selector: 'upli-pricing',
@@ -11,11 +13,27 @@ export class PricingComponent implements OnInit {
 
   plans: PlanDto[] = [];
 
-  constructor(private utilsService: UtilsService) {
+  project_id: string;
+
+  constructor(private utilsService: UtilsService,
+              private activatedRoute: ActivatedRoute,
+              private projectService: ProjectService) {
   }
 
   ngOnInit() {
     this.utilsService.getPlans().subscribe(plans => this.plans = plans);
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.project_id = params.project_id;
+    });
   }
 
+  buyPlan(id: string) {
+    if (this.project_id == null){
+      alert('project_id is null');
+      return;
+    }
+    this.projectService.buyPlan(this.project_id, id).subscribe(res => {
+      console.log(res);
+    })
+  }
 }

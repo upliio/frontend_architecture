@@ -3,7 +3,7 @@
 
   <nz-descriptions nzBordered>
     <nz-descriptions-item nzTitle="Plan" [nzSpan]="3">
-      {{project.plan.name}} <a routerLink="/pricing" [queryParams]="{project_id: project?.project_id}">Upgrade</a>
+      {{project.plan.name}} <a routerLink="/pricing" [queryParams]="{project_id: project?.project_id}" *ngIf="project.plan.id == 'static_free'">Upgrade</a>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="Domain">
       <div *ngIf="!editDomain">

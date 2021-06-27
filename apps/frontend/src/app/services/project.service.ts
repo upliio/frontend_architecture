@@ -12,10 +12,14 @@ export class ProjectService {
 
   getProjectById = (project_id: string) => this.http.get<ProjectEntity>(`/api/project/${project_id}`);
 
-  updateField = (project: ProjectEntity, field: string, value: {value: any}) => this.http.post<ProjectEntity>(`/api/project/${project.project_id}/update/${field}`, value);
+  updateField = (project: ProjectEntity, field: string, value: { value: any }) => this.http.post<ProjectEntity>(`/api/project/${project.project_id}/update/${field}`, value);
 
 
   getDomain = (project: ProjectEntity) => `https://${project.domain}${project.domain.includes('.') ? '' : '.upli.io'}`;
 
+
+  buyPlan = (project_id: string, id: string) => this.http.post(`/api/project/${project_id}/upgrade`, {plan: id});
+
+  checkPlan = (project_id: string) => this.http.get(`/api/project/${project_id}/upgrade/check`);
 
 }

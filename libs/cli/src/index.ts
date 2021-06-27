@@ -32,6 +32,7 @@ axiosInstance.interceptors.response.use(response => response, error => {
       console.log(`${Colors.FgRed}Please login with ${Colors.FgCyan}upli login${Colors.Reset}`);
       break;
     case 403: // dont handle this error here
+      debug('Server error: ' + JSON.stringify(error));
       break;
     default:
       const errorMessages = error.response?.data?.error?.message;
