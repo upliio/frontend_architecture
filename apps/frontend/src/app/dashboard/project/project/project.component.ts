@@ -16,6 +16,8 @@ export class ProjectComponent implements OnInit {
 
   editDomain = false;
 
+  error: any;
+
 
   constructor(private activatedRoute: ActivatedRoute,
               private notificationService: NzNotificationService,
@@ -24,7 +26,8 @@ export class ProjectComponent implements OnInit {
 
   ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
-      this.projectService.getProjectById(params.project_id).subscribe(project => this.project = project);
+      this.error = null;
+      this.projectService.getProjectById(params.project_id).subscribe(project => this.project = project, err => this.error = err);
     });
   }
 

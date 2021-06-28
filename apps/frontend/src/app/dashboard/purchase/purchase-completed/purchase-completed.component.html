@@ -1,14 +1,17 @@
-<ng-container *ngIf="params">
+<ng-container *ngIf="!project">Please wait...</ng-container>
+<ng-container *ngIf="params && project">
   <div style="display: flex; justify-content: center">
-    <nz-result
+    <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i> Verify receipt of funds</ng-template>
+    <nz-spin nzSimple [nzIndicator]="indicatorTemplate" *ngIf="!plan"> </nz-spin>
+    <nz-result *ngIf="plan"
       nzStatus="success"
-      nzTitle="Successfully Purchased Lite Upgrade for testproject1"
-      nzSubTitle="You can cancel the subscription at any time under the project settings. Be aware that when you cancel the subscription, files may be lost if you have exceeded the storage space of the free subscription."
+      nzTitle="Successfully Purchased {{plan.name}} Plan for {{project.name}}"
+      nzSubTitle="You can cancel the subscription at any time under the project settings. Be aware that when you cancel the subscription, files may be lost if you have exceeded the storage space of the free subscription. Next debit will be on {{plan.subscription.expireAt | date: 'dd.MM.YYYY'}}"
       style="max-width: 800px"
     >
       <div nz-result-extra>
-        <button nz-button nzType="primary">View your project</button>
-        <button nz-button>Subscriptions</button>
+        <button nz-button nzType="primary" [routerLink]="'/dashboard/project/' + params.project_id">View your project</button>
+        <button nz-button routerLink="/dashboard/user/subscriptions">Subscriptions</button>
       </div>
     </nz-result>
 

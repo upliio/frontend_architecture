@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {PlanDto} from '@upli/shared';
 import {UtilsService} from '../../services/utils.service';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {ProjectService} from '../../services/project.service';
 
 @Component({
@@ -17,7 +17,8 @@ export class PricingComponent implements OnInit {
 
   constructor(private utilsService: UtilsService,
               private activatedRoute: ActivatedRoute,
-              private projectService: ProjectService) {
+              private projectService: ProjectService,
+              private router: Router) {
   }
 
   ngOnInit() {
@@ -33,7 +34,7 @@ export class PricingComponent implements OnInit {
       return;
     }
     this.projectService.buyPlan(this.project_id, id).subscribe(res => {
-      console.log(res);
+      window.location.href = res.paypalApproveUrl;
     })
   }
 }
