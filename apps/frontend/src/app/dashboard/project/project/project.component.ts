@@ -55,4 +55,14 @@ export class ProjectComponent implements OnInit {
       this.notificationService.success('Successfully', `Project ${res.enabled ? 'enabled' : 'disabled'}!`);
     });
   }
+
+  editDomainField() {
+    this.projectService.hasPlan(this.project, 'static_lite').subscribe(result => {
+      if (result.allowed) {
+        this.editDomain = true;
+      } else {
+        this.notificationService.error('Error', `This feature requires an ${result.requiredPlan.name} upgrade!`);
+      }
+    });
+  }
 }

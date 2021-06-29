@@ -10,7 +10,16 @@ code {
   cursor: Pointer;
   font-size: 14px;
 
-  &:hover{
+  &:hover {
 
   }
+}
+
+
+.premium {
+  font-size: 7px;
+  border-radius:50%;
+  color: orange;
+  margin-left: 3px;
+  font-weight: bold;
 }

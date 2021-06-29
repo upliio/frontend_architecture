@@ -1,3 +1,25 @@
+<ng-template #tplSelectProject let-params>
+  <div *ngIf="freeProjects.length > 0">
+    <h3>Select a project for the {{selectedPlan.name}} Upgrade</h3>
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <div *ngFor="let project of freeProjects">
+        <button nz-button [nzType]="project.project_id == project_id ? 'primary' : 'link'"
+                (click)="project_id = project.project_id">{{project.name}}</button>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="freeProjects.length == 0">
+    You do not have any projects that have a plan that is still currently free. First create a new project via the cli with the command <code>upli init</code>
+  </div>
+</ng-template>
+<ng-template #tplSelectProjectFooter let-ref="modalRef">
+  <button nz-button (click)="ref.triggerCancel()">Cancel</button>
+  <button nz-button nzType="primary" (click)="buyPlan(selectedPlan.id, ref)" [nzLoading]="loading"
+          [disabled]="!project_id">Purchase
+  </button>
+</ng-template>
+
+
 <div style="margin-top:100px">
   <div nz-row nzJustify="center" style="gap: 30px">
     <ng-container *ngFor="let plan of plans">
@@ -6,7 +28,9 @@
       </nz-card>
       <ng-template #headerTemplate>
         <span *ngIf="plan.id == 'static_free'">Included</span>
-        <button nz-button *ngIf="plan.id != 'static_free'" (click)="buyPlan(plan.id)">For {{plan.price | number : '1.0-2'}}€ /month</button>
+        <button nz-button *ngIf="plan.id != 'static_free'" (click)="buyPlan(plan.id)" [nzLoading]="loading">
+          For {{plan.price | number : '1.0-2'}}€ /month
+        </button>
       </ng-template>
     </ng-container>
   </div>

@@ -2,18 +2,24 @@
   <h2>{{project?.name}}</h2>
 
   <nz-descriptions nzBordered>
-    <nz-descriptions-item nzTitle="Plan" [nzSpan]="3">
+    <nz-descriptions-item nzTitle="Plan">
       <h3>{{project.plan.name}}</h3> <a routerLink="/pricing" [queryParams]="{project_id: project?.project_id}" *ngIf="project.plan.id == 'static_free'">Upgrade</a>
       <div *ngIf="project.plan.subscription" style="display:flex;flex-direction:column">
-        <span>Expire at {{project.plan.subscription.expireAt | date: 'dd.MM.YYYY'}}</span>
-        <span>Next payment {{project.plan.subscription.nextPayment | date: 'dd.MM.YYYY'}}</span>
-        <span>Subscription {{project.plan.subscription.status}}</span>
+        <span *ngIf="project.plan.subscription.status != 'ACTIVE'">Expire at {{project.plan.subscription.expireAt | date: 'dd.MM.YYYY'}}</span>
+        <span *ngIf="project.plan.subscription.lastPayment">Last payment {{project.plan.subscription.lastPayment | date: 'dd.MM.YYYY'}}</span>
+        <span *ngIf="project.plan.subscription.nextPayment">Next payment {{project.plan.subscription.nextPayment | date: 'dd.MM.YYYY'}}</span>
       </div>
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="Domain">
+    <nz-descriptions-item nzTitle="{{(((project.stats_bytes_used) / 1000) / project.plan.max_kb) | percent}} storage used">
+      {{project.stats_bytes_used | bytes : 0 : 'B' : 'KB'}} / {{project.plan.max_kb | bytes : 0 : 'KB' : 'KB'}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{(project.stats_total_files / project.plan.max_files) | percent}} files">
+      {{project.stats_total_files}} / {{project.plan.max_files}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="Domain" nzSpan="3">
       <div *ngIf="!editDomain">
         <a [href]="projectService.getDomain(project)" target="_blank">{{projectService.getDomain(project)}}</a>
-        <button nz-button nzType="link" (click)="editDomain = true">Edit</button>
+        <button nz-button nzType="link" (click)="editDomainField()">Edit <span class="premium" nz-tooltip="Requires a Lite plan">Premium</span></button>
       </div>
       <form (submit)="saveDomain(newDomainInp, true)" style="display:flex;flex-direction:row;column-gap:10px"
             *ngIf="editDomain">
@@ -24,12 +30,6 @@
         <button nz-button nzDanger nzType="link" (click)="saveDomain(newDomainInp, false)"><i nz-icon nzType="minus-circle"></i>
         </button>
       </form>
-    </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="Storage used">
-      {{project.stats_bytes_used | bytes : 0 : 'B' : 'KB'}} / {{project.plan.max_kb | bytes : 0 : 'KB' : 'KB'}}
-    </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="Files">
-      {{project.stats_total_files}} / {{project.plan.max_files}}
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="Status" [nzSpan]="3">
       <nz-badge [nzStatus]="project.enabled ? 'success' : 'error'"
